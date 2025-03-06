@@ -1,55 +1,3 @@
-## Data Processing & Handling
-
-The project includes sophisticated data processing pipelines to handle the complex multimodal inputs required for training:
-
-### HTML Processing (`utils/html_processor.py`)
-
-- **DOM Cleaning & Formatting**: Removes unnecessary HTML elements (scripts, styles) while preserving structural information
-- **Node Identification**: Assigns unique node IDs to DOM elements for tracking
-- **Attribute Pruning**: Retains only essential attributes to reduce input size
-- **Context Window Management**: Implements smart truncation strategies to fit large DOMs within model context limits
-
-### Visual Processing (`utils/visual_processor.py`)
-
-- **Screenshot Handling**: Processes both full-page screenshots and element-level crops
-- **Visual Feature Extraction**: Uses CLIP's vision encoder to extract semantic visual features
-- **Element Bounding Box Integration**: Maps DOM elements to their visual regions in screenshots
-- **Visual Context Formation**: Creates combined representations that connect visual and textual information
-
-### Dataset Creation (`data/mind2web_dataset.py`)
-
-- **Mind2Web Integration**: Adapts the Mind2Web dataset for multimodal training by adding visual components
-- **Example Construction**: Each training example includes:
-  - Task description (e.g., "Book a flight from New York to San Francisco")
-  - URL and DOM structure
-  - Screenshot with element bounding boxes
-  - Target element and action (click, type, select)
-- **Efficiency Optimizations**: Implements pickling for preprocessed data to avoid redundant computation
-- **Data Augmentation**: Supports targeted data augmentation to handle DOM and visual variations
-
-### Data Pipeline Scripts
-
-The repository includes several scripts for data handling:
-
-- `data_creator.py`: Creates and pickles the dataset for efficient training
-- `run_inference.py`: Handles optimized data loading during inference
-- `dataset_creator.sh`: Shell script for running dataset creation on compute clusters
-
-Example usage pattern:
-
-```python
-# From data_creator.py
-dataloader = create_multimodal_mind2web_dataloader(
-    'Multimodal-Mind2Web/data',
-    "train",
-    tokenizer=tokenizer,
-    visual_processor=visual_processor,
-)
-
-# Pickle for reuse
-save_object(dataset, 'dataset_full.pkl')
-```# Cross-Modal Web Agent
-
 This project is an experimental approach to develop a web agent that leverages both HTML DOM structure and visual screenshots to improve web navigation accuracy. Inspired by my work on a Chrome extension for IPO market information in India and experience with Gemini's 1M context window for multimodal applications, this project attempts to combine textual and visual information to create a more robust agent capable of handling ambiguous UI elements and understanding visual context.
 
 ## The Importance of Multimodality in Browser Automation
@@ -65,12 +13,6 @@ Multimodal agents address these challenges by integrating:
 - **Textual Understanding**: Processing DOM structure, element attributes, and content
 - **Visual Understanding**: Recognizing UI elements by appearance, layout, and visual context
 - **Cross-modal Reasoning**: Connecting what an element "looks like" with what it "does"
-
-This approach is particularly valuable for:
-- E-commerce automation (product selection based on appearance)
-- Form filling with complex validation
-- Web testing that requires visual confirmation
-- Accessibility-focused automation
 
 > **Note:** This project is currently in the experimental stage and fine-tuning has not yet been successfully completed. The architecture and approach described below represent the design goals rather than proven results.
 
@@ -138,15 +80,59 @@ unzip test_domain.zip
 cd ../..
 ```
 
+### HTML Processing (`utils/html_processor.py`)
+
+- **DOM Cleaning & Formatting**: Removes unnecessary HTML elements (scripts, styles) while preserving structural information
+- **Node Identification**: Assigns unique node IDs to DOM elements for tracking
+- **Attribute Pruning**: Retains only essential attributes to reduce input size
+- **Context Window Management**: Implements smart truncation strategies to fit large DOMs within model context limits
+
+### Visual Processing (`utils/visual_processor.py`)
+
+- **Screenshot Handling**: Processes both full-page screenshots and element-level crops
+- **Visual Feature Extraction**: Uses CLIP's vision encoder to extract semantic visual features
+- **Element Bounding Box Integration**: Maps DOM elements to their visual regions in screenshots
+- **Visual Context Formation**: Creates combined representations that connect visual and textual information
+
+### Dataset Creation (`data/mind2web_dataset.py`)
+
+- **Mind2Web Integration**: Adapts the Mind2Web dataset for multimodal training by adding visual components
+- **Example Construction**: Each training example includes:
+  - Task description (e.g., "Book a flight from New York to San Francisco")
+  - URL and DOM structure
+  - Screenshot with element bounding boxes
+  - Target element and action (click, type, select)
+- **Efficiency Optimizations**: Implements pickling for preprocessed data to avoid redundant computation
+- **Data Augmentation**: Supports targeted data augmentation to handle DOM and visual variations
+
+### Data Pipeline Scripts
+
+The repository includes several scripts for data handling:
+
+- `data_creator.py`: Creates and pickles the dataset for efficient training
+- `run_inference.py`: Handles optimized data loading during inference
+- `dataset_creator.sh`: Shell script for running dataset creation on compute clusters
+
+Example usage pattern:
+
+```python
+# From data_creator.py
+dataloader = create_multimodal_mind2web_dataloader(
+    'Multimodal-Mind2Web/data',
+    "train",
+    tokenizer=tokenizer,
+    visual_processor=visual_processor,
+)
+
+# Pickle for reuse
+save_object(dataset, 'dataset_full.pkl')
+```# Cross-Modal Web Agent
+
 ## Training
 
 ### Environment Setup
 
-The training process requires significant computational resources:
-
-- At least one GPU with 32GB+ VRAM (V100/A100 recommended)
-- Alternatively, multiple GPUs with DeepSpeed ZeRO-3 for distributed training
-- 150GB+ disk space for dataset and model checkpoints
+- 1 or 2 V100 32GB GPU
 
 ### Configuration
 
