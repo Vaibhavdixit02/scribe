@@ -1,0 +1,42 @@
+# Cross-Modal Web Agent Configuration
+
+# Project information
+project_name: "cross_modal_web_agent"
+run_name: "cross_modal_agent_v1"
+output_dir: "checkpoints"
+
+# Data configuration
+data:
+  data_dir: "data/mind2web"  # Path to Mind2Web dataset
+
+# Model configuration
+model:
+  text_model_name: "Qwen/Qwen2-7B"  # Base text model
+  vision_model_name: "openai/clip-vit-base-patch32"  # Vision model
+  max_length: 32768  # Maximum sequence length
+  use_lora: true  # Use parameter-efficient fine-tuning
+  lora_rank: 16
+  lora_alpha: 32
+
+# Training configuration
+training:
+  batch_size: 4  # Per device batch size
+  gradient_accumulation_steps: 4
+  num_epochs: 3
+  learning_rate: 2.0e-4
+  weight_decay: 0.01
+  warmup_steps: 100
+  lr_scheduler_type: "cosine"
+  logging_steps: 10
+  eval_steps: 200
+  save_steps: 200
+  num_workers: 4
+  use_wandb: true
+  
+# Evaluation configuration
+evaluation:
+  batch_size: 1
+  splits:
+    - "test_task"
+    - "test_website" 
+    - "test_domain"
